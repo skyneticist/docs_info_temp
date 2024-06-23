@@ -1,0 +1,22 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    export PATH="$HOME/.cargo/bin:$PATH"
+  displayName: 'Install Rust'
+
+- script: |
+    export PATH="$HOME/.cargo/bin:$PATH"
+    cargo build --release
+  displayName: 'Build Rust Application'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: 'target/release/avtodocs'
+    artifactName: 'avtodocs'
+    publishLocation: 'Container'

@@ -1,0 +1,9 @@
+
+repositories:
+  - name: crust
+    url: https://dev.azure.com/your-org/team1/repo1.git
+    branch: main
+
+  - name: git_gadget
+    url: https://dev.azure.com/your-org/team2/repo2.git
+    branch: main

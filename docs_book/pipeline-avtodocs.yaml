@@ -1,0 +1,33 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azure_static_web_apps_api_token: $(deployment_token)
+
+steps:
+- script: |
+    curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.12/mdbook-v0.4.12-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C $HOME/.cargo/bin
+  displayName: 'Install mdBook'
+  
+- download: current
+  artifact: avtodocs
+  displayName: 'Download Rust Application'
+
+- script: |
+    export PATH="$HOME/.cargo/bin:$PATH"
+    ./avtodocs
+  displayName: 'Checkout, Combine Repositories and Update SUMMARY.md'
+
+- script: |
+    export PATH="$HOME/.cargo/bin:$PATH"
+    mdbook build book
+  displayName: 'Build mdBook'
+
+- task: AzureStaticWebApp@0
+  inputs:
+    app_location: 'book/book'
+    output_location: '_book'
+    azure_static_web_apps_api_token: $(azure_static_web_apps_api_token)
